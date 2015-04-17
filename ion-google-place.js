@@ -19,14 +19,10 @@ angular.module('ion-google-place', [])
                     defaultLocations: '='
                 },
                 link: function(scope, element, attrs, ngModel) {
-                    var unbindBackButtonAction;
-
                     scope.locations = scope.defaultLocations || [];
-
-                    var autocompleteService = new google.maps.places.AutocompleteService(),
-                        googlePlacesService = new google.maps.places.PlacesService(document.getElementsByClassName('google-place-search')[0]),
-                        geocoder = new google.maps.Geocoder();
-
+                    
+                    var unbindBackButtonAction;
+                    var geocoder = new google.maps.Geocoder();
                     var searchEventTimeout = undefined;
 
                     var POPUP_TPL = [
@@ -42,7 +38,7 @@ angular.module('ion-google-place', [])
                             '</div>',
                             '<ion-content class="has-header has-header">',
                                 '<ion-list>',
-                                    '<ion-item ng-repeat="location in locations" type="item-text-wrap" ng-click="selectLocation(location)">',
+                                    '<ion-item ng-repeat="location in locations track by $index" type="item-text-wrap" ng-click="selectLocation(location)">',
                                         '{{location.formatted_address}}',
                                     '</ion-item>',
                                 '</ion-list>',

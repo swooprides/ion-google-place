@@ -25,6 +25,14 @@ angular.module('ion-google-place', [])
                     var geocoder = new google.maps.Geocoder();
                     var searchEventTimeout = undefined;
 
+                    // create fake hidden input, because google.maps.places.PlacesService won't work without it
+
+                    var input = document.createElement('input');
+                    input.type = 'text';
+                    input.style.display = 'none';
+                    input.className = 'fake-hidden-input';
+                    document.body.appendChild(input);
+
                     var POPUP_TPL = [
                         '<div class="ion-google-place-container modal">',
                             '<div class="bar bar-header item-input-inset">',
@@ -78,7 +86,7 @@ angular.module('ion-google-place', [])
 
                         function placesGeocode(req, callback) {
                             var autocompleteService = new google.maps.places.AutocompleteService(),
-                                googlePlacesService = new google.maps.places.PlacesService(document.getElementsByClassName('google-place-search')[0]);
+                                googlePlacesService = new google.maps.places.PlacesService(document.getElementsByClassName('fake-hidden-input')[0]);
 
                             autocompleteService.getPlacePredictions({input: req.address}, function(predictions, status) {
                                 if (status !== google.maps.places.PlacesServiceStatus.OK) {

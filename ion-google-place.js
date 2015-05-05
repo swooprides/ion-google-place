@@ -194,7 +194,7 @@ angular.module('ion-google-place', [])
                         if (!ngModel.$viewValue) {
                             element.val('');
                         } else {
-                            element.val(ngModel.$viewValue.formatted_address || '');
+                            element.val(ngModel.$viewValue.formatted_address || ngModel.$modelValue.formatted_address || '');
                         }
                     };
 

@@ -47,12 +47,32 @@ angular.module('ion-google-place', [])
                             '<ion-content class="has-header has-header">',
                                 '<ion-list>',
                                     '<ion-item ng-repeat="location in locations track by $index" type="item-text-wrap" ng-click="selectLocation(location)">',
-                                        '{{ location.name }}, {{location.formatted_address}}',
+                                        '<span ng-if="shouldNameBeShown(location.types)"> {{ location.name }},</span> {{location.formatted_address}}',
                                     '</ion-item>',
                                 '</ion-list>',
                             '</ion-content>',
                         '</div>'
                     ].join('');
+
+                    /*
+                     * Check if location.name should be shown
+                     */
+                    scope.shouldNameBeShown = function(locationTypes) {
+                        if (!locationTypes) {
+                            return false;
+                        }
+
+                        var typesToExclude = ['street_address'],
+                            shouldBeShown = true;
+
+                        for (var i = 0; i < locationTypes.length; i++) {
+                            if (typesToExclude.indexOf(locationTypes[i]) >= 0) {
+                                shouldBeShown = false;
+                                break;
+                            }
+                        }
+                        return shouldBeShown;
+                    }
 
                     var popupPromise = $ionicTemplateLoader.compile({
                         template: POPUP_TPL,
@@ -118,8 +138,10 @@ angular.module('ion-google-place', [])
                                 req.address = query;
 
                                 if (attrs.geocodeService === 'places-api') {
-                                    placesGeocode(req, function(results) {
-                                        scope.locations = results;                                 
+                                    placesGeocode(req, function(results) {                               
+                                        scope.locations = results.filter(function(result) {
+                                            return result;
+                                        });
                                     });
                                 } else {
                                     mapsGeocode(req, function(results) {

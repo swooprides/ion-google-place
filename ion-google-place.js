@@ -47,7 +47,7 @@ angular.module('ion-google-place', [])
                             '<ion-content class="has-header has-header">',
                                 '<ion-list>',
                                     '<ion-item ng-repeat="location in locations track by $index" type="item-text-wrap" ng-click="selectLocation(location)">',
-                                        '{{location.formatted_address}}',
+                                        '{{ location.name }}, {{location.formatted_address}}',
                                     '</ion-item>',
                                 '</ion-list>',
                             '</ion-content>',

@@ -20,7 +20,15 @@ angular.module('ion-google-place', [])
                 },
                 link: function(scope, element, attrs, ngModel) {
                     scope.locations = scope.defaultLocations || [];
-                    
+
+                    var defaultLocationsWatcher = scope.$watch('defaultLocations', function (newValue, oldValue) {
+                        if (newValue && newValue instanceof Array && newValue.length) {
+                            scope.locations = newValue;
+                            scope.defaultLocations = newValue;
+                            defaultLocationsWatcher();
+                        }
+                    });
+
                     var unbindBackButtonAction;
                     var geocoder = new google.maps.Geocoder();
                     var searchEventTimeout = undefined;
@@ -87,6 +95,10 @@ angular.module('ion-google-place', [])
                             ngModel.$setViewValue(location);
                             ngModel.$render();
                             el.element.css('display', 'none');
+
+                            scope.searchQuery = '';
+                            scope.locations = scope.defaultLocations || [];
+
                             $ionicBackdrop.release();
 
                             if (unbindBackButtonAction) {
@@ -157,6 +169,7 @@ angular.module('ion-google-place', [])
                             e.preventDefault();
                             e.stopPropagation();
 
+
                             $ionicBackdrop.retain();
                             unbindBackButtonAction = $ionicPlatform.registerBackButtonAction(closeOnBackButton, 250);
 
@@ -168,9 +181,12 @@ angular.module('ion-google-place', [])
                         };
 
                         var onCancel = function(e){
-                            scope.searchQuery = '';
                             $ionicBackdrop.release();
                             el.element.css('display', 'none');
+
+                            scope.searchQuery = '';
+                            scope.locations = scope.defaultLocations || [];
+                            scope.$$phase || scope.$digest();
 
                             if (unbindBackButtonAction){
                                 unbindBackButtonAction();

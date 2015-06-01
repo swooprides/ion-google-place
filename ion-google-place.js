@@ -149,6 +149,8 @@ angular.module('ion-google-place', [])
                                 var req = scope.geocodeOptions || {};
                                 req.address = query;
 
+                                scope.locations = [];
+
                                 if (attrs.geocodeService === 'places-api') {
                                     placesGeocode(req, function(results) {                               
                                         scope.locations = results.filter(function(result) {

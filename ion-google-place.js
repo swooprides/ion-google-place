@@ -42,11 +42,11 @@ angular.module('ion-google-place', [])
                     document.body.appendChild(input);
 
                     var POPUP_TPL = [
-                        '<div class="ion-google-place-container modal">',
+                        '<div class="ion-google-place-container modal"' + (attrs.popupId ? ('id="' + attrs.popupId + '"') : '') + '>',
                             '<div class="bar bar-header item-input-inset">',
                                 '<label class="item-input-wrapper">',
                                     '<i class="icon ion-ios-search placeholder-icon"></i>',
-                                    '<input class="google-place-search" type="search" ng-model="searchQuery" placeholder="' + (attrs.searchPlaceholder || 'Enter an address, place or ZIP code') + '">',
+                                    '<input ' + (attrs.popupId ? ('id="' + attrs.popupId + '-input"') : '') + ' class="google-place-search" type="search" ng-model="searchQuery" placeholder="' + (attrs.searchPlaceholder || 'Enter an address, place or ZIP code') + '">',
                                 '</label>',
                                 '<button class="button button-clear">',
                                     attrs.labelCancel || 'Cancel',

@@ -172,7 +172,6 @@ angular.module('ion-google-place', [])
                             e.preventDefault();
                             e.stopPropagation();
 
-
                             $ionicBackdrop.retain();
                             unbindBackButtonAction = $ionicPlatform.registerBackButtonAction(closeOnBackButton, 250);
 
@@ -180,7 +179,10 @@ angular.module('ion-google-place', [])
                             searchInputElement[0].focus();
                             setTimeout(function(){
                                 searchInputElement[0].focus();
-                            },0);
+                            }, 0);
+                            setTimeout(function() {
+                                searchInputElement[0].focus();
+                            },100)
                         };
 
                         var onCancel = function(e){

@@ -129,6 +129,11 @@ angular.module('ion-google-place', [])
                                 var promises = predictions.map(function(prediction) {
                                     var defer = $q.defer();
                                     googlePlacesService.getDetails({reference: prediction.reference}, function(details) {
+                                        if (details && details.photos) {
+                                            details.photos = details.photos.map(function (photo) {
+                                                return photo.getUrl({'maxWidth': 320, 'maxHeight': 320});
+                                            });
+                                        }
                                         defer.resolve(details);
                                     });
                                     return defer.promise;
@@ -182,7 +187,7 @@ angular.module('ion-google-place', [])
                             }, 0);
                             setTimeout(function() {
                                 searchInputElement[0].focus();
-                            },100)
+                            }, 100)
                         };
 
                         var onCancel = function(e){

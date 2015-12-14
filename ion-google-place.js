@@ -182,12 +182,12 @@ angular.module('ion-google-place', [])
 
                             el.element.css('display', 'block');
                             searchInputElement[0].focus();
-                            setTimeout(function(){
+                            setTimeout(function() {
                                 searchInputElement[0].focus();
                             }, 0);
                             setTimeout(function() {
                                 searchInputElement[0].focus();
-                            }, 100)
+                            }, 100);
                         };
 
                         var onCancel = function(e){

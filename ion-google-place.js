@@ -56,7 +56,10 @@ angular.module('ion-google-place', [])
                                 '<ion-list>',
                                     '<ion-item ng-repeat="location in locations track by $index" type="item-text-wrap" ng-click="selectLocation(location)">',
                                         '<i ng-if="location.icon" class="icon" ng-class="location.icon"></i>',
-                                        '<span ng-if="shouldNameBeShown(location.types)"> {{ location.name }},</span> {{location.formatted_address}}',
+                                        '<span ng-if="location.placeholder"> {{location.placeholder}}</span>',
+                                        '<span ng-if="!location.placeholder">',
+                                            '<span ng-if="shouldNameBeShown(location.types) && location.name"> {{ location.name }},</span> {{location.formatted_address}}',
+                                        '</span>',
                                     '</ion-item>',
                                 '</ion-list>',
                             '</ion-content>',
@@ -182,12 +185,12 @@ angular.module('ion-google-place', [])
 
                             el.element.css('display', 'block');
                             searchInputElement[0].focus();
-                            setTimeout(function() {
+                            setTimeout(function(){
                                 searchInputElement[0].focus();
                             }, 0);
                             setTimeout(function() {
                                 searchInputElement[0].focus();
-                            }, 100);
+                            }, 100)
                         };
 
                         var onCancel = function(e){

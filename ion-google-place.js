@@ -19,13 +19,25 @@ angular.module('ion-google-place', [])
                     defaultLocations: '='
                 },
                 link: function(scope, element, attrs, ngModel) {
-                    scope.locations = scope.defaultLocations || [];
+                    var alwaysShownLocations = [],
+                        defaultLocations = [];
+
+                    scope.locations = scope.defaultLocations;
 
                     var defaultLocationsWatcher = scope.$watch('defaultLocations', function (newValue, oldValue) {
                         if (newValue && newValue instanceof Array && newValue.length) {
-                            scope.locations = newValue;
-                            scope.defaultLocations = newValue;
-                            defaultLocationsWatcher();
+                            alwaysShownLocations.length = 0;
+                            defaultLocations.length = 0;
+
+                            newValue.map(function (location) {
+                                if (location.shouldAlwaysBeShown) {
+                                    alwaysShownLocations.push(location);
+                                } else {
+                                    defaultLocations.push(location);
+                                }
+                            });
+
+                            scope.locations = alwaysShownLocations.concat(defaultLocations);
                         }
                     });
 
@@ -101,7 +113,6 @@ angular.module('ion-google-place', [])
                             el.element.css('display', 'none');
 
                             scope.searchQuery = '';
-                            scope.locations = scope.defaultLocations || [];
 
                             $ionicBackdrop.release();
 
@@ -161,15 +172,16 @@ angular.module('ion-google-place', [])
                                 scope.locations = [];
 
                                 if (attrs.geocodeService === 'places-api') {
-                                    placesGeocode(req, function(results) {                               
-                                        scope.locations = results.filter(function(result) {
+                                    placesGeocode(req, function(results) {
+                                        results = results.filter(function(result) {
                                             return result;
-                                        });
+                                        });                             
+                                        scope.locations = alwaysShownLocations.concat(results);
                                     });
                                 } else {
                                     mapsGeocode(req, function(results) {
                                         scope.$apply(function() {
-                                            scope.locations = results;
+                                            scope.locations = alwaysShownLocations.concat(results);
                                         });
                                     });
                                 }
@@ -198,7 +210,6 @@ angular.module('ion-google-place', [])
                             el.element.css('display', 'none');
 
                             scope.searchQuery = '';
-                            scope.locations = scope.defaultLocations || [];
                             scope.$$phase || scope.$digest();
 
                             if (unbindBackButtonAction){

@@ -7,7 +7,8 @@ angular.module('ion-google-place', [])
         '$timeout',
         '$rootScope',
         '$document',
-        function($ionicTemplateLoader, $ionicBackdrop, $ionicPlatform, $q, $timeout, $rootScope, $document) {
+        '$filter',
+        function($ionicTemplateLoader, $ionicBackdrop, $ionicPlatform, $q, $timeout, $rootScope, $document, $filter) {
             return {
                 require: '?ngModel',
                 restrict: 'E',
@@ -16,7 +17,8 @@ angular.module('ion-google-place', [])
                 scope: {
                     ngModel: '=?',
                     geocodeOptions: '=',
-                    defaultLocations: '='
+                    defaultLocations: '=',
+                    filters: '='
                 },
                 link: function(scope, element, attrs, ngModel) {
                     var alwaysShownLocations = [],
@@ -24,7 +26,7 @@ angular.module('ion-google-place', [])
 
                     scope.locations = scope.defaultLocations;
 
-                    var defaultLocationsWatcher = scope.$watch('defaultLocations', function (newValue, oldValue) {
+                    var defaultLocationsWatcher = scope.$watch('defaultLocations', function (newValue) {
                         if (newValue && newValue instanceof Array && newValue.length) {
                             alwaysShownLocations.length = 0;
                             defaultLocations.length = 0;
@@ -96,7 +98,7 @@ angular.module('ion-google-place', [])
                             }
                         }
                         return shouldBeShown;
-                    }
+                    };
 
                     var popupPromise = $ionicTemplateLoader.compile({
                         template: POPUP_TPL,
@@ -163,8 +165,8 @@ angular.module('ion-google-place', [])
                         scope.$watch('searchQuery', function(query){
                             if (searchEventTimeout) $timeout.cancel(searchEventTimeout);
                             searchEventTimeout = $timeout(function() {
-                                if(!query) return;
-                                if(query.length < 3);
+                                if (!query) return;
+                                if (query.length < 3);
 
                                 var req = scope.geocodeOptions || {};
                                 req.address = query;
@@ -175,7 +177,7 @@ angular.module('ion-google-place', [])
                                     placesGeocode(req, function(results) {
                                         results = results.filter(function(result) {
                                             return result;
-                                        });                             
+                                        });
                                         scope.locations = alwaysShownLocations.concat(results);
                                     });
                                 } else {
@@ -202,7 +204,7 @@ angular.module('ion-google-place', [])
                             }, 0);
                             setTimeout(function() {
                                 searchInputElement[0].focus();
-                            }, 100)
+                            }, 100);
                         };
 
                         var onCancel = function(e){
@@ -228,7 +230,7 @@ angular.module('ion-google-place', [])
                                 unbindBackButtonAction();
                                 unbindBackButtonAction = null;
                             }
-                        }
+                        };
 
                         element.bind('click', onClick);
                         element.bind('touchend', onClick);
@@ -243,7 +245,7 @@ angular.module('ion-google-place', [])
 
                     ngModel.$formatters.unshift(function (modelValue) {
                         if (!modelValue) {
-                            return ''; 
+                            return '';
                         }
                         return modelValue;
                     });
@@ -252,11 +254,22 @@ angular.module('ion-google-place', [])
                         return viewValue;
                     });
 
-                    ngModel.$render = function(){
+                    ngModel.$render = function() {
+                        var value;
+
                         if (!ngModel.$viewValue) {
                             element.val('');
                         } else {
-                            element.val(ngModel.$viewValue.formatted_address || ngModel.$modelValue.formatted_address || '');
+
+                            value = ngModel.$viewValue.formatted_address || ngModel.$modelValue.formatted_address || '';
+
+                            if (scope.filters && scope.filters.length) {
+                                scope.filters.forEach(function(filter) {
+                                    value = $filter(filter)(value);
+                                });
+                            }
+
+                            element.val(value);
                         }
                     };
 

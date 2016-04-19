@@ -32,7 +32,7 @@ angular.module('ion-google-place', [])
                             defaultLocations.length = 0;
 
                             newValue.map(function (location) {
-                                if (location.shouldAlwaysBeShown) {
+                                if (location && location.shouldAlwaysBeShown) {
                                     alwaysShownLocations.push(location);
                                 } else {
                                     defaultLocations.push(location);
